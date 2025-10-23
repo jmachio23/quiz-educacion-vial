@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Test Educación Vial — 104 preguntas</title>
+<style>
+  :root{
+    --bg:#090909; /* very dark */
+    --panel:#111214; /* dark grey panel */
+    --muted:#9aa0a6;
+    --accent:#33cc66; /* green */
+    --danger:#e74c3c; /* red */
+    --glass: rgba(255,255,255,0.02);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Inter,ui-sans-serif,system-ui,Segoe UI,Roboto,"Helvetica Neue",Arial;color:#e6eef3;background:linear-gradient(180deg,var(--bg),#070707);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+  .card{width:100%;max-width:980px;background:linear-gradient(180deg,var(--panel),#0b0b0b);border-radius:12px;padding:20px;box-shadow:0 8px 30px rgba(0,0,0,0.7);}
+  .header{display:flex;align-items:center;gap:16px}
+  .title{font-size:18px;font-weight:600}
+  .sub{color:var(--muted);font-size:13px}
+  .progress-wrap{margin-top:14px}
+  .progress-outer{height:12px;background:#0b0b0b;border-radius:999px;overflow:hidden;border:1px solid rgba(255,255,255,0.03)}
+  .progress-inner{height:100%;width:0%;background:linear-gradient(90deg,var(--accent),#24b35a);transition:width .25s ease}
+  .block-progress{height:8px;background:#0b0b0b;border-radius:999px;margin-top:8px;overflow:hidden;border:1px solid rgba(255,255,255,0.02)}
+  .block-inner{height:100%;width:0%;background:linear-gradient(90deg,#6fbf5a,#2db86b);transition:width .25s}
+  .main{display:grid;grid-template-columns:1fr 320px;gap:18px;margin-top:18px}
+  .left{padding:14px;background:var(--glass);border-radius:10px}
+  .question-number{color:var(--muted);font-size:13px}
+  .question-text{margin-top:8px;font-size:20px;line-height:1.35}
+  .options{margin-top:16px;display:flex;flex-direction:column;gap:10px}
+  .opt{background:#0f1112;border:1px solid rgba(255,255,255,0.03);padding:12px 14px;border-radius:8px;color:#e9f0f5;cursor:pointer;text-align:left;font-size:15px;transition:transform .08s ease,box-shadow .08s,background .12s}
+  .opt:hover{transform:translateY(-3px);box-shadow:0 8px 30px rgba(0,0,0,0.6)}
+  .opt.disabled{cursor:default;opacity:0.9;transform:none}
+  .opt.correct{background:linear-gradient(90deg, rgba(51,204,102,0.12), rgba(51,204,102,0.06));border-color:rgba(51,204,102,0.18);box-shadow:0 6px 20px rgba(51,204,102,0.06)}
+  .opt.wrong{background:linear-gradient(90deg, rgba(231,76,60,0.08), rgba(231,76,60,0.03));border-color:rgba(231,76,60,0.14)}
+  .meta{display:flex;align-items:center;justify-content:space-between;margin-top:12px}
+  .controls{display:flex;align-items:center;gap:12px}
+  .btn{background:#121416;border:1px solid rgba(255,255,255,0.04);color:var(--muted);padding:10px 14px;border-radius:8px;cursor:pointer}
+  .btn:disabled{opacity:0.5;cursor:default}
+  .btn.primary{background:linear-gradient(180deg,#1f6b3a,#1a5f34);color:#fff;border:none}
+  .sidebar{background:transparent;padding:14px;border-radius:8px;color:var(--muted)}
+  .panel{background:#0b0b0b;padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.02)}
+  .info-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0}
+  .big{font-size:22px;color:#fff}
+  .small{font-size:13px;color:var(--muted)}
+  .blocks{display:flex;gap:8px;margin-top:12px}
+  .block-pill{padding:6px 10px;border-radius:999px;background:#07120a;border:1px solid rgba(255,255,255,0.02);color:var(--muted);font-size:13px}
+  footer{display:flex;justify-content:space-between;align-items:center;margin-top:18px}
+  .center-fail{font-weight:700;color:var(--danger);}
+  @media (max-width:900px){.main{grid-template-columns:1fr;}.sidebar{order:2}}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="header">
+    <div>
+      <div class="title">Test — Educación Vial (Tema 1) — 104 preguntas</div>
+      <div class="sub">Modo oscuro limpio · Resalta respuestas correctas/incorrectas</div>
+    </div>
+    <div style="margin-left:auto;text-align:right">
+      <div class="sub">Progreso general</div>
+      <div style="width:260px;" class="progress-wrap">
+        <div class="progress-outer"><div id="general-progress" class="progress-inner"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="left">
+      <div class="question-number" id="qnum">Pregunta 1 / 104</div>
+      <div class="question-text" id="qtext">Cargando pregunta...</div>
+      <div class="options" id="opts"></div>
+      <div class="meta">
+        <div class="controls">
+          <button id="backBtn" class="btn">⬅ Atrás</button>
+          <button id="nextBtn" class="btn primary">Seguir ➡</button>
+        </div>
+        <div style="text-align:right">
+          <div class="small">Bloque <span id="blockIndex">1</span> — Progreso</div>
+          <div class="block-progress" style="width:240px"><div id="block-progress-inner" class="block-inner"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <aside class="sidebar">
+      <div class="panel">
+        <div class="info-row"><div class="small">Pregunta actual</div><div class="big" id="asideQnum">1</div></div>
+        <div class="info-row"><div class="small">Total preguntas</div><div class="big">104</div></div>
+        <div class="info-row"><div class="small">Bloques</div><div class="big">5</div></div>
+        <div style="height:8px"></div>
+        <div class="small">Bloques (1–21,22–42,43–63,64–84,85–104)</div>
+        <div class="blocks" id="blockPills"></div>
+      </div>
+
+      <div style="height:12px"></div>
+      <div class="panel">
+        <div class="small">Fallos acumulados</div>
+        <div style="height:8px"></div>
+        <div class="big center-fail" id="failCount">0</div>
+      </div>
+
+    </aside>
+  </div>
+
+  <footer>
+    <div class="small">Diseño: negro y gris • Respuestas coloreadas</div>
+    <div class="small">Usa los botones para navegar</div>
+  </footer>
+</div>
+
+<script>
+// Preguntas (104) — cada objeto {q, options: [], answer: index}
+const questions = [
+{q:"En 1934 el principal hito de la educación vial fue:", options:["Ley Orgánica de Ordenación General del Sistema Educativo","Código de la Circulación","Ley Orgánica de Educación"], answer:1},
+{q:"¿Cuáles son las áreas de la Educación Secundaria Obligatoria en las que se puede aplicar la Educación Vial?", options:["Educación física, física y química y geografía e historia","Biología y geología y tecnología","Todas son correctas"], answer:2},
+{q:"¿Cuáles son algunos de los objetivos que persigue la nueva movilidad?", options:["Segura y sostenible","No persigue ningún nuevo objetivo","No utilizar elementos reflectantes durante la noche"], answer:0},
+{q:"¿Nuestra movilidad debe ser?", options:["Segura, sostenible, conectada, inclusiva","Rápida, individual, competitiva y costosa.","Impulsiva, desorganizada, dependiente y contaminante."], answer:0},
+{q:"¿Cuál de estos factores se debe al factor humano?", options:["Vía en mal estado","Vehículo sin mantenimiento","Problema en los frenos del vehículo"], answer:1},
+{q:"Los niños y niñas de educación infantil actúan en las vías públicas como:", options:["Peatones y conductores","Peatones y acompañantes","No actúan de ninguna manera"], answer:1},
+{q:"¿Qué infracción es la más habitual en los peatones?", options:["Atravesar la calzada antirreglamentariamente","Circular por la acera","Escuchar música"], answer:0},
+{q:"¿Cuál fue la primera legislación vial en España que reguló la circulación de vehículos por las carreteras?", options:["El código de la Circulación de 1934.","El Reglamento para el Servicio de Coches Automóviles por las Carreteras del Estado de 1900.","La ley general de Educación de 1970."], answer:1},
+{q:"¿Cuál de estas definiciones pertenece a la de MVP?", options:["Vehículos de una o más ruedas dotadas de una única plaza propulsados exclusivamente por motores eléctricos.","Vehículos destinados al transporte de mercancías pesadas por carretera.","Vehículos con motor de combustión interna destinados al transporte colectivo de personas."], answer:0},
+{q:"La Ley General 14/1970, de Educación y Financiamiento de la Reforma Educativa, incluía la Educación vial como:", options:["Una asignatura independiente.","Un contenido transversal en diferentes materias.","Un curso optativo para conductores."], answer:1},
+{q:"Los vehículos de movilidad personal tienen prohibido circular…", options:["Por vías interurbanas","Por la acera","Todas son correctas"], answer:2},
+{q:"¿Qué efecto negativo tiene la tecnología sobre la seguridad del peatón?", options:["Aumenta su visibilidad al usar dispositivos electrónicos.","Disminuye su capacidad de reacción al conducir.","Reduce su atención al tráfico cuando utiliza dispositivos móviles al caminar."], answer:2},
+{q:"¿Cuál es una de las infracciones más habituales del peatón en vías interurbanas?", options:["Cruzar por pasos de peatones sin mirar.","No usar elementos reflectantes durante el crepúsculo o la noche.","Caminar por el lado derecho de la calzada."], answer:1},
+{q:"Los pasajeros de un autobús deben ser capaces de localizar e identificar…", options:["Situación del martillo de emergencia.","Ambas son correctas.","La situación de las puertas y ventanas de salida de emergencia."], answer:1},
+{q:"¿Cuáles son los beneficios asociados al uso de la bicicleta?", options:["Salud, movilidad, economía, medioambiente y equidad.","Salud, movilidad y medioambiente.","Ninguna es correcta."], answer:0},
+{q:"¿Cuáles son los objetivos de las intervenciones en educación vial destinadas a los pasajeros que deben contemplar?", options:["Abstenerse de arrojar objetos, colillas… etc. a la vía.","Valorar la importancia de la regla PAS en un siniestro vial.","Ambas son correctas."], answer:2},
+{q:"¿Por qué son vulnerables los conductores de vehículos de 2 ruedas?", options:["Tienen mayor probabilidad de lesiones o de muerte en caso de accidente.","Simplemente tienen mayor probabilidad de lesiones.","A la hora de circular cometen más imprudencias."], answer:0},
+{q:"¿Qué se considera población joven?", options:["Entre 15 y 40 años.","Entre 15 y 20 años.","Entre 15 y 29 años."], answer:2},
+{q:"Principales causas de los accidentes.", options:["B y C son correctas.","Exceso de velocidad, alcohol y drogas","Falta de experiencia y no respetar las normas."], answer:0},
+{q:"¿Quiénes pertenecen al principal grupo vulnerable?", options:["Niños, jóvenes y personas mayores como conductores y como peatones.","Niños y jóvenes como peatones.","Únicamente los niños."], answer:0},
+{q:"¿Cuáles de estos grupos son más vulnerables?", options:["Ciclistas, conductores de motocicletas y ciclomotores.","Ciclistas y conductores de ciclomotores.","Conductores de ciclomotores y motocicletas."], answer:0},
+{q:"Principal causa de mortalidad en accidentes de motocicletas y ciclomotores", options:["No llevar casco.","Exceso de velocidad.","Imprudencias."], answer:0},
+{q:"¿Qué porcentaje de minusvalías producidas en España está relacionada con accidentes de tráfico?", options:["45%.","40%.","50%."], answer:1},
+{q:"¿Hacia dónde va dirigida la movilidad sostenible en nuestra sociedad para una buena integración de todos?", options:["Hacia una movilidad segura, sostenible, conectada, inclusiva y eficiente.","Hacia una movilidad, segura, eficiente, rápida y contaminante.","Hacia una movilidad sostenible, con vehículos eléctricos, con vías de acceso rápido sin limitación de velocidad."], answer:0},
+{q:"¿Cuál de estas respuestas sería la correcta para los peatones?", options:["Evitar el uso de dispositivos digitales en situaciones que requieran especial atención.","Utilizar elementos de alta visibilidad en vías interurbanas.","Debe tomar conciencia de la vulnerabilidad ante un siniestro vial.","Todas son correctas."], answer:3},
+{q:"La actual movilidad tiene unos impactos inaceptables y que es urgente reconducirlos hacia formas más sostenibles.", options:["VERDADERO","FALSO"], answer:0},
+{q:"Como ha influido la tecnología en la atención de los peatones durante su transcurso por la vía?", options:["POSITIVAMENTE","NEGATIVAMENTE","NO HA INFLUIDO"], answer:1},
+{q:"En que porcentajes de tiempo se reduce un desplazamiento urbano de un ciclomotor comparado con un turismo?", options:["entre un 10% y un 20%","entre un 50% y un 70%","entre un 80% y 90%"], answer:1},
+{q:"¿En qué fecha se aprobó el Código de la Circulación?", options:["1934","1964","1932"], answer:0},
+{q:"La ley Orgánica 9/1995 ¿Mantiene el criterio de incorporar la Educación vial como parte transversal de las enseñanzas?", options:["VERDADERO","FALSO"], answer:0},
+{q:"Una conducción satisfactoria se hace cumpliendo con las necesidades y expectativas de los ciudadanos", options:["Verdadero","Falso"], answer:0},
+{q:"Una de las ventajas del ciclomotor es:", options:["Velocidad","Bajo precio y consumo","Dificultad de aparcamiento"], answer:1},
+{q:"Una de las tareas del pasajero es:", options:["Poner música","No limitar la visión del conductor","Dormir hasta llegar al destino"], answer:1},
+{q:"¿De los siguientes porcentajes cual corresponde a los siniestros viales debidos al factor humano?", options:["70%","90%","40%"], answer:1},
+{q:"¿Por qué motivo puede un conductor tener sus capacidades básicas de conducción mermadas?", options:["Exceso de velocidad","Asfalto en mal estado","Alcohol, drogas, fármacos…"], answer:2},
+{q:"¿Por dónde pueden circular los VMP?", options:["Travesías, autopista y autovía.","Aceras","Vía urbana excepto pasos inferiores."], answer:2},
+{q:"¿Qué beneficios están asociados al incremento del uso de las bicicletas?", options:["Salud y movilidad","Cansancio","Agotamiento mental"], answer:0},
+{q:"Según los últimos cambios normativos intentan aumentar la protección del ciclista, bajando la velocidad a:", options:["35 km/h","30 km/h","40 km/h"], answer:1},
+{q:"¿De quién es la responsabilidad en la seguridad vial?", options:["De todas las personas que intervienen en los desplazamientos de las calles y carreteras.","Conductores","Peatones y ciclistas"], answer:0},
+{q:"Concluimos que la Educación Vial debe:", options:["Producirse a lo largo de todo el ciclo vital.","No debe tener en cuenta el perfil del destinatario.","Solo es útil para los niños menores de 8 años."], answer:0},
+{q:"¿Qué debe aprender un bebé de 0-5 años?", options:["La movilidad segura y sostenible.","Utilización de sistemas de retención infantil.","Actualizarse respecto a cambios en normas de seguridad."], answer:1},
+{q:"¿Qué deben aprender los usuarios de 60 o más años?", options:["Adquisición y revisión de condiciones psicofísicas.","Utilización de sistemas de retención infantil.","Elección de hábitos de ocio y primeros consumos de alcohol y otras sustancias."], answer:0},
+{q:"¿Qué reglamento se escribió en 1900?", options:["Código de la Circulación.","Reglamento para el servicio de coches automóviles por las Carreteras del Estado.","Reglamento de la Participación, Evaluación y Gobierno de los Centros Docentes."], answer:1},
+{q:"Se dice en el Código de la Circulación, que el profesorado de todas las escuelas y colegios…", options:["Están obligados a enseñar a sus alumnos las reglas generales de la Circulación","No están obligados a enseñar a sus alumnos las reglas generales de la Circulación.","Ninguna es correcta."], answer:0},
+{q:"La Educación Vial en la Movilidad Sostenible persigue, entre otras, ser:", options:["Segura, Sostenible, Inclusiva y Saludable.","Barata, Rápida y Segura.","Amable, Conectada y basada en el transporte público."], answer:0},
+{q:"¿Cómo puede prevenir un peatón posibles accidentes?", options:["El peatón no puede hacer nada para prevenir un accidente.","Usando gafas de sol entre el ocaso del sol y la salida de este.","Evitando el uso de dispositivos digitales en situaciones que requieran de especial atención al tráfico."], answer:2},
+{q:"Factor desencadenante más habitual en un siniestro vial", options:["Factor humano.","Factor vía.","Factor vehículo."], answer:0},
+{q:"Respecto a los Vehículos de Movilidad Personal (VMP):", options:["Por diseño, su velocidad está comprendida entre 5 y 55 km/h.","Su circulación por las aceras está prohibida.","Pueden transportar conductor y pasajero siempre que este vaya a horcajadas sobre el manillar."], answer:1},
+{q:"¿Debe seguir alguna norma de educación vial una persona usuaria como pasajero?", options:["Debe conocer la forma más segura para esperar, acceder y bajarse de un vehículo.","Debe entretener y animar al conductor con música a alto volumen.","El pasajero no debe seguir ninguna norma de educación vial, ya que son responsabilidad exclusiva del conductor del vehículo."], answer:0},
+{q:"En cuanto al uso del transporte colectivo, de acuerdo a la Ley 1/2014 de Transporte de Viajeros por Carretera está prohibido…", options:["Ir de pie, siempre.","Atender las indicaciones que formule el personal de la empresa titular de la concesión o autorización.","Hacer uso, sin causa justificada, de cualquiera de los mecanismos de seguridad o socorro instalados en el vehículo para casos de emergencia."], answer:2},
+{q:"En la “Estrategia Estatal por la Bicicleta” se detalla que su uso produce beneficios de carácter…", options:["Vital, social y local.","Equitativo, Medioambiental y Económico.","Únicamente medioambiental."], answer:1},
+{q:"¿Cuáles son las ventajas de tener un ciclomotor?", options:["Mayor facilidad de estacionamiento","Mas seguros","Tiene menos probabilidad de siniestros viales porque esquiva las amenazas."], answer:0},
+{q:"¿Para circular con mayor seguridad dentro de un ciclomotor?", options:["Es obligatorio el uso de los dos espejos retrovisores.","Se debe llevar una rueda de repuesto en la parte trasera en caso de accidente.","Manejar adecuadamente el vehículo y sus mandos y conseguir una utilización responsable del vehículo."], answer:2},
+{q:"¿Quiénes pertenecen al principal grupo vulnerable?", options:["los niños solamente.","Los niños y los jóvenes como peatones.","Los niños, los jóvenes y las personas mayores como conductores y como peatones."], answer:2},
+{q:"¿A quién podemos considerar también grupos vulnerables?", options:["A los ciclistas y conductores de ciclomotores.","A los conductores de ciclomotores y motocicletas.","A los ciclistas, conductores de motocicletas y ciclomotores."], answer:2},
+{q:"¿Por qué se consideran grupos vulnerables a los conductores de vehículos de dos ruedas?", options:["Porque a la hora de circular cometen más imprudencias.","Porque debido al transporte que usan tienen mayor probabilidad de lesiones únicamente.","Porque debido al transporte que usan tienen mayor probabilidad de lesiones o de muerte en caso de accidente."], answer:2},
+{q:"¿Qué porcentaje de víctimas mortales tiene la población joven?", options:["Cerca del 30%","Cerca del 35%.","Cerca del 40%."], answer:1},
+{q:"¿A qué se considera población joven?", options:["A las edades comprendidas entre 15 y 25 años.","A las edades comprendidas entre 15 y 29 años.","A las edades comprendidas entre 15 y 35 años."], answer:1},
+{q:"Aproximadamente, ¿qué porcentaje de minusvalías que se producen en España está relacionada con los accidentes de tráfico?", options:["40%","45%","50%"], answer:0},
+{q:"¿Dónde se suelen dar más accidentes?", options:["En las rectas","En los cambios de rasante","En las grandes ciudades y sus alrededores"], answer:2},
+{q:"¿Cuándo suelen producirse más accidentes?", options:["En periodos estivales","A primera hora de la mañana","Las vísperas de los fines de semana"], answer:0},
+{q:"¿Cuáles son las principales causas de los accidentes?", options:["El exceso de velocidad, alcohol y drogas.","La falta de experiencia y no respetar las normas.","Ambas respuestas son correctas."], answer:2},
+{q:"¿Por qué tienen menos accidentes las personas mayores cuando van con niños?", options:["Porque intentan no cometer imprudencias para dar buen ejemplo.","Porque los niños les alertan de los peligros.","Porque tienen mejor visión periférica."], answer:0},
+{q:"¿Por qué es más fácil que fallezca un peatón en carreteras?", options:["Por las altas velocidades de los vehículos a su alrededor.","Porque cometen menos imprudencias.","Porque circulan por lugares apropiados."], answer:0},
+{q:"¿Cuál es una de las principales causas de mortalidad en los accidentes de motocicletas y ciclomotores?", options:["El exceso de velocidad.","El no llevar casco.","Las imprudencias."], answer:1},
+{q:"Un peatón es un actor más en la convivencia vial, por ello su comportamiento puede influir de forma notable, por tanto, debe cumplir ciertas normas: ¿Cuál sería la correcta?", options:["Evitar el uso de dispositivos digitales en situaciones que requieran de especial atención","Utilizar elementos de alta visibilidad en vías interurbanas","No tomar conciencia de la vulnerabilidad ante un siniestro vial","Todas son correctas"], answer:3},
+{q:"En el caso del transporte público es importante incluir en la educación, normas que en el caso de incumplir puedan ser sancionados; de todas ellas cual es la correcta:", options:["Manipular, forzar o impedir el funcionamiento de los mecanismos de apertura","Hacer uso, sin causa justificada, de cualquiera de los mecanismos de seguridad o socorro instalados en el vehículo para casos de emergencia","Abandonar o acceder al vehículo fuera de las paradas establecidas al efecto, mientras el mismo está en movimiento...","Todas son correctas"], answer:3},
+{q:"Marca cuales son los beneficios asociados al incremento del uso de la bicicleta:", options:["Salud: Aumento de la actividad física","Movilidad: Reduce la congestión y el estrés del trafico","Medioambiente: no produce ruidos, no genera emisiones de gases, contribuye al ahorro energético","Todas son correctas"], answer:3},
+{q:"¿Qué es la Educación Vial?", options:["Enseñar solo a conducir.","Fomentar hábitos seguros, responsables y respetuosos en la vía.","Aprender las señales de tráfico de memoria."], answer:1},
+{q:"¿Qué valor trata principalmente la Educación Vial?", options:["Ético y moral.","Económico.","Deportivo."], answer:0},
+{q:"¿Cuándo hablamos de que la nueva movilidad debe ser “sostenible", a qué nos referimos?", options:["Minimizar el gasto energético y los recursos necesarios para realizar cualquier desplazamiento.","Satisfacer las necesidades de la sociedad actual, pero sin afectar de forma desfavorable e irreversible a las futuras generaciones.","Invitar al disfrute de los desplazamientos hasta llegar a los destinos elegidos."], answer:1},
+{q:"¿Cuándo hablamos de que la nueva movilidad debe ser “eficiente", a qué nos referimos?", options:["Facilitar una movilidad universal, adaptándose a las necesidades de todas las personas.","Evitar enfermedades y muertes por respirar humos tóxicos y contaminantes.","Minimizar el gasto energético y los recursos necesarios para realizar cualquier desplazamiento."], answer:2},
+{q:"Entre los beneficios que encontramos por el uso de la bicicleta encontramos…", options:["Salud, movilidad y seguridad.","Salud, movilidad y economía.","Salud, seguridad y economía."], answer:1},
+{q:"¿Cuáles son las ventajas de circular en ciclomotor?", options:["Reducir la duración del trayecto.","Bajo precio y consumo.","Ambas respuestas son correctas."], answer:2},
+{q:"“La Educación Vial” en los programas escolares tiene como objetivo…", options:["Que podamos circular libremente como queramos.","Velar por la seguridad y el comportamiento en las vías públicas, de forma responsable, y teniendo en cuenta a los otros usuarios de la vía.","Velar por la seguridad y el comportamiento en las vías públicas, de forma responsable, sin tener en cuenta a los otros usuarios de la vía."], answer:1},
+{q:"La movilidad eficiente busca:", options:["Gastar más energía para recorrer menos distancia.","Minimizar el gasto energético y de recursos.","Usar vehículos más grandes."], answer:1},
+{q:"El peatón es especialmente vulnerable porque:", options:["No tiene elementos de protección.","Siempre usa auriculares.","Conoce menos normas que los conductores."], answer:0},
+{q:"Uno de los errores más habituales de los peatones es:", options:["Usar chalecos reflectantes.","No utilizar elementos reflectantes durante la noche.","Caminar por el lado izquierdo."], answer:1},
+{q:"La “Estrategia Española de Movilidad” entiende la movilidad como:", options:["Un derecho y un elemento de cohesión social.","Una obligación laboral.","Un lujo de las grandes ciudades."], answer:0},
+{q:"¿Qué significa reducir la “huella ecológica"?", options:["Dejar de usar transporte.","Conducir de forma eficiente y cuidar el vehículo.","Aumentar la velocidad."], answer:1},
+{q:"Los Vehículos de Movilidad Personal (VMP) pueden alcanzar como máximo:", options:["25 km/h.","40 km/h.","10 km/h."], answer:0},
+{q:"Los VMP tienen prohibido circular:", options:["Por carriles bici.","Por aceras, autopistas y autovías.","Por calles urbanas."], answer:1},
+{q:"Un pasajero debe:", options:["Mantener un ambiente tranquilo para no distraer al conductor.","Hablar fuerte para mantener despierto al conductor.","Manipular las puertas automáticas."], answer:0},
+{q:"En el autobús, los pasajeros deben conocer:", options:["La localización del martillo de emergencia y del extintor.","Solo dónde se sientan.","Cómo abrir las ventanas delanteras."], answer:0},
+{q:"Usar la bicicleta como medio de transporte es beneficioso porque:", options:["Aumenta el tráfico.","Es saludable, económico y sostenible.","Requiere mucha inversión."], answer:1},
+{q:"La Educación Vial contribuye a una sociedad:", options:["Más segura y responsable.","Más competitiva.","Más dependiente del coche."], answer:0},
+{q:"¿Qué busca principalmente la Educación Vial?", options:["Enseñar a manejar vehículos","Promover actitudes seguras y responsables en la vía","Reducir el número de autos en circulación"], answer:1},
+{q:"¿Qué aspecto combina la Educación Vial?", options:["Normas, valores y comportamientos","Matemáticas y física","Tráfico y economía"], answer:0},
+{q:"¿Por qué es importante la Educación Vial en la sociedad?", options:["Porque contribuye a prevenir accidentes","Porque fomenta el uso del transporte privado","Porque enseña mecánica automotriz"], answer:0},
+{q:"¿Cuál es un objetivo central de la Educación Vial?", options:["Aumentar la velocidad promedio en las carreteras","Fomentar una convivencia segura en la vía","Disminuir el número de semáforos"], answer:1},
+{q:"¿Cuándo comenzaron las primeras campañas de Educación Vial?", options:["En el siglo XIX","A mediados del siglo XX","En el siglo XXI"], answer:1},
+{q:"¿Qué factor impulsó la necesidad de la Educación Vial?", options:["La invención del teléfono","El aumento del tráfico automotor","La reducción de accidentes"], answer:1},
+{q:"¿Qué institución solía liderar las campañas viales en sus inicios?", options:["Las autoridades de tránsito","Las empresas privadas","Las escuelas de arte"], answer:0},
+{q:"¿Cómo se enseñaba la Educación Vial en sus primeros años?", options:["Mediante charlas y carteles informativos","Con clases virtuales","Con simuladores de conducción"], answer:0},
+{q:"¿Qué papel cumplen las nuevas tecnologías en la Educación Vial?", options:["Facilitan el aprendizaje con recursos interactivos","Reemplazan la enseñanza presencial","Sustituyen las normas de tránsito"], answer:0},
+{q:"En 2022, ¿qué enfoque se fortaleció en la Educación Vial?", options:["La seguridad y la responsabilidad compartida","El uso exclusivo del automóvil","La eliminación de señales de tránsito"], answer:0},
+{q:"¿Qué grupo recibe especial atención en los programas actuales?", options:["Niños y jóvenes","Solo conductores profesionales","Adultos mayores"], answer:0},
+{q:"¿Qué recurso se usa hoy para fomentar la conciencia vial?", options:["Campañas digitales y redes sociales","Periódicos en blanco y negro","Clases de historia"], answer:0},
+{q:"¿Qué valor se promueve especialmente en la educación vial moderna?", options:["Respeto","Competencia","Orgullo"], answer:0},
+{q:"¿Qué relación tiene la Educación Vial con la movilidad sostenible?", options:["Promueve modos de transporte seguros y ecológicos","Incentiva el uso del automóvil particular","Evita el uso del transporte público"], answer:0},
+{q:"¿Qué medio de transporte sostenible requiere educación vial específica?", options:["La bicicleta","El avión","El tren"], answer:0},
+{q:"¿Qué objetivo persigue la movilidad sostenible?", options:["Reducir el impacto ambiental y mejorar la convivencia vial","Aumentar la velocidad del tráfico","Incrementar el número de autos eléctricos"], answer:0},
+{q:"¿Qué acción contribuye a la movilidad sostenible?", options:["Caminar o usar transporte público","Usar autos grandes y potentes","Evitar compartir el vehículo"], answer:0},
+{q:"¿Qué actitud fomenta la educación vial dentro de la movilidad sostenible?", options:["Respeto por los demás y por el entorno","Competencia entre usuarios de la vía","Indiferencia ante las normas"], answer:0}
+];
+
+// Bloques: 1(1-21),2(22-42),3(43-63),4(64-84),5(85-104)
+const blockRanges = [ {start:1,end:21}, {start:22,end:42}, {start:43,end:63}, {start:64,end:84}, {start:85,end:104} ];
+
+let idx = 0; // current index into questions (0-based)
+let fails = 0;
+let answered = Array(questions.length).fill(false);
+
+const qnumEl = document.getElementById('qnum');
+const qtextEl = document.getElementById('qtext');
+const optsEl = document.getElementById('opts');
+const generalProgress = document.getElementById('general-progress');
+const blockInner = document.getElementById('block-progress-inner');
+const blockIndexEl = document.getElementById('blockIndex');
+const asideQnum = document.getElementById('asideQnum');
+const failCountEl = document.getElementById('failCount');
+const backBtn = document.getElementById('backBtn');
+const nextBtn = document.getElementById('nextBtn');
+const blockPills = document.getElementById('blockPills');
+
+function init(){
+  // render block pills
+  blockRanges.forEach((b,i)=>{
+    const el = document.createElement('div'); el.className='block-pill'; el.textContent = `Bloque ${i+1} (${b.start}-${b.end})`; blockPills.appendChild(el);
+  });
+  loadQuestion();
+}
+
+function loadQuestion(){
+  const q = questions[idx];
+  qnumEl.textContent = `Pregunta ${idx+1} / ${questions.length}`;
+  qtextEl.textContent = q.q;
+  asideQnum.textContent = idx+1;
+  // options
+  optsEl.innerHTML='';
+  q.options.forEach((opt, i)=>{
+    const b = document.createElement('button');
+    b.className='opt'; b.innerText = opt; b.onclick = ()=>selectAnswer(i,b);
+    optsEl.appendChild(b);
+  });
+  updateProgress();
+  updateNav();
+}
+
+function updateProgress(){
+  const genPct = ((idx+1)/questions.length)*100;
+  generalProgress.style.width = genPct + '%';
+  // determine block
+  const blockIndex = blockRanges.findIndex(b=> (idx+1) >= b.start && (idx+1) <= b.end );
+  const block = blockRanges[blockIndex];
+  blockIndexEl.textContent = blockIndex+1;
+  const within = (idx+1) - block.start + 1; // 1-based within block
+  const blockLen = block.end - block.start + 1;
+  const blockPct = (within / blockLen) * 100;
+  blockInner.style.width = blockPct + '%';
+}
+
+function updateNav(){
+  backBtn.disabled = (idx === 0);
+  nextBtn.disabled = (idx === questions.length-1);
+}
+
+function selectAnswer(choice,buttonEl){
+  if(answered[idx]) return;
+  answered[idx]=true;
+  const correct = questions[idx].answer;
+  const buttons = Array.from(optsEl.querySelectorAll('button'));
+  buttons.forEach((b, i)=>{ b.classList.add('disabled'); b.disabled = true; if(i===correct) b.classList.add('correct'); });
+  if(choice===correct){
+    buttonEl.classList.add('correct');
+  } else {
+    buttonEl.classList.add('wrong');
+    // correct already marked above
+    fails++;
+    failCountEl.textContent = fails;
+  }
+}
+
+backBtn.addEventListener('click', ()=>{
+  if(idx>0){ idx--; loadQuestion(); }
+});
+
+nextBtn.addEventListener('click', ()=>{
+  if(idx < questions.length-1){ idx++; loadQuestion(); } else { alert('Has completado las 104 preguntas. Fallos: '+fails); }
+});
+
+// allow keyboard shortcuts: left/right
+window.addEventListener('keydown', (e)=>{
+  if(e.key==='ArrowRight') nextBtn.click();
+  if(e.key==='ArrowLeft') backBtn.click();
+});
+
+init();
+</script>
+</body>
+</html>
